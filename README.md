@@ -72,7 +72,7 @@ If we look into [compose.yml](./compose.yml) we see the following services:
 - CP broker (and controller) instance
 - Prometheus
 - Grafana
-- A client thaat is producing and consuming to/from the same topic.
+- A client that is producing and consuming to/from the same topic. 
 
 ### CP Broker
 
@@ -97,6 +97,8 @@ And finally we are defining the metrics to be exposed with the file (kafka-metri
 ### Producer/Consumer Client
 
 We are running the producer and the consumer from the same Java class (ProducerConsumerDemo.java)[./producerConsumer/src/main/java/producerconsumer/ProducerConsumerDemo.java] in different threads.
+
+This class is a minimal Kafka producer–consumer demo designed specifically to intentionally generate observable consumer lag at the Kafka client level, so metrics like `kafka_consumer_records_lag_max` can be visualised in Grafana.
 
 When defining the service in the (compose.yml)[./compose.yml] we expose the JMX (on port 7074):
 
