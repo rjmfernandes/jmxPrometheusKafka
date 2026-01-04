@@ -62,7 +62,7 @@ For the CP broker/controller side we also have some associated charts:
 - Total Produce Request Rate
 - Produce Request Rate
 
-Note that it should also be possible to explore most of the client metrics from the broker side with CP 8+ with (KIP-714)[https://cwiki.apache.org/confluence/display/KAFKA/KIP-714%3A+Client+metrics+and+observability]. Check https://github.com/rjmfernandes/kip714
+Note that it should also be possible to explore most of the client metrics from the broker side with CP 8+ with [KIP-714](https://cwiki.apache.org/confluence/display/KAFKA/KIP-714%3A+Client+metrics+and+observability). Check https://github.com/rjmfernandes/kip714
 
 ## How it works
 
@@ -84,7 +84,7 @@ To expose the JMX port for Prometheus to scrape we set:
       KAFKA_OPTS: "-javaagent:/etc/kafka/${JMX}=7071:/etc/kafka/kafka-metrics.yml"
 ```
 
-The variable `JMX` is pointing as per (.env)[./.env] file to the library (we have mounted in the `compose.yml` file from `kafka/jmx_prometheus_javaagent-0.20.0.jar`):
+The variable `JMX` is pointing as per [.env](./.env) file to the library (we have mounted in the `compose.yml` file from `kafka/jmx_prometheus_javaagent-0.20.0.jar`):
 
 ```
 JMX=jmx_prometheus_javaagent-0.20.0.jar
@@ -92,15 +92,15 @@ JMX=jmx_prometheus_javaagent-0.20.0.jar
 
 We are also setting the port for Prometheus to screape to `7071`.
 
-And finally we are defining the metrics to be exposed with the file (kafka-metrics.yml)[./kafka/kafka-metrics.yml].
+And finally we are defining the metrics to be exposed with the file [kafka-metrics.yml](./kafka/kafka-metrics.yml).
 
 ### Producer/Consumer Client
 
-We are running the producer and the consumer from the same Java class (ProducerConsumerDemo.java)[./producerConsumer/src/main/java/producerconsumer/ProducerConsumerDemo.java] in different threads.
+We are running the producer and the consumer from the same Java class [ProducerConsumerDemo.java](./producerConsumer/src/main/java/producerconsumer/ProducerConsumerDemo.java) in different threads.
 
 This class is a minimal Kafka producer–consumer demo designed specifically to intentionally generate observable consumer lag at the Kafka client level, so metrics like `kafka_consumer_records_lag_max` can be visualised in Grafana.
 
-When defining the service in the (compose.yml)[./compose.yml] we expose the JMX (on port 7074):
+When defining the service in the [compose.yml](./compose.yml) we expose the JMX (on port 7074):
 
 ```
     command:
@@ -116,15 +116,15 @@ The library was mounted in the service just like before with the CP broker.
 
 ### Prometheus
 
-We define the tragets for scraping in the file (prometheus.yml)[./prometheus/prometheus.yml]. So that it will scrape both the CP broker and the client.
+We define the tragets for scraping in the file [prometheus.yml](./prometheus/prometheus.yml). So that it will scrape both the CP broker and the client.
 
 ### Grafana
 
-We define first the data source pointing to our prometheus in (datasource.yml)[./grafana/datasource/datasource.yml].
+We define first the data source pointing to our prometheus in [datasource.yml](./grafana/datasource/datasource.yml).
 
 Next we deine the dashboards (mounted in the service in the `compose.yml`):
-- (main-dashboard.json)[.grafana/dashboards/main-dashboard.json]
-- (client-dashboard.json)[.grafana/dashboards/client-dashboard.json]
+- [main-dashboard.json](.grafana/dashboards/main-dashboard.json)
+- [client-dashboard.json](.grafana/dashboards/client-dashboard.json)
 
 In general you will want to explore the metrics in Prometheus check for example in http://localhost:9090 to query `kafka_consumer_` and see the metrics available for you to build the charts in Grafana and save the dashboard after for reuse.
 
