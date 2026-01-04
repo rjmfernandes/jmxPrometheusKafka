@@ -1,0 +1,93 @@
+---
+services:
+  broker:
+    image: confluentinc/cp-server:${TAG}
+    hostname: broker
+    container_name: broker
+
+    healthcheck:
+      test: curl -fail --silent http://broker:8090/kafka/v3/clusters/ --output /dev/null || exit 1
+      interval: 10s
+      retries: 10
+      start_period: 20s
+    environment:
+      KAFKA_NODE_ID: 1
+      CLUSTER_ID: Nk018hRAQFytWskYqtQduw
+      KAFKA_PROCESS_ROLES: controller,broker
+      KAFKA_LISTENERS: CONTROLLER://broker:19091,PLAINTEXT://broker:19092,EXTERNAL://0.0.0.0:9091
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@broker:19091
+      KAFKA_JMX_PORT: 9999
+      KAFKA_JMX_HOSTNAME: broker
+      KAFKA_BROKER_RACK: rack-0
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 1
+      KAFKA_OFFSET_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_CONFLUENT_METADATA_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_MIN_INSYNC_REPLICAS: 1
+      KAFKA_METRIC_REPORTERS: io.confluent.telemetry.reporter.TelemetryReporter
+      CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: broker:19092
+      KAFKA_CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:19092, EXTERNAL://localhost:9091
+      KAFKA_CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: broker:19092
+      KAFKA_CONFLUENT_TELEMETRY_METRICS_COLLECTOR_INTERVAL_MS: "60000"
+      KAFKA_CONFLUENT_TELEMETRY_REMOTECONFIG_CONFLUENT_ENABLED: "false"
+      KAFKA_CONFLUENT_CONSUMER_LAG_EMITTER_ENABLED: "true"
+      KAFKA_OPTS: "-javaagent:/etc/kafka/${JMX}=7071:/etc/kafka/kafka-metrics.yml"
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - "./kafka/${JMX}:/etc/kafka/${JMX}"
+      - "./kafka/kafka-metrics.yml:/etc/kafka/kafka-metrics.yml"
+    ports:
+      - 19091:19091
+      - 9091:9091
+
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - "./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
+    ports:
+      - 9090:9090
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - 3000:3000
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=grafana
+    volumes:
+      - ./grafana/datasource:/etc/grafana/provisioning/datasources
+      - ./grafana/dashboard.yaml:/etc/grafana/provisioning/dashboards/main.yaml
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+
+  producer-consumer:
+    image: eclipse-temurin:17-jre
+    container_name: producer-consumer
+    depends_on:
+      - broker
+    environment:
+      KAFKA_BOOTSTRAP: broker:19092
+      KAFKA_TOPIC: demo-topic
+      PRODUCE_INTERVAL_MS: "1000"
+      KAFKA_CONSUMER_GROUP: demo-group
+    volumes:
+      - ./producerConsumer/dist/producer-consumer-demo-1.0.0-SNAPSHOT.jar:/app/app.jar:ro
+      - ./kafka/${JMX}:/opt/jmx/${JMX}
+      - ./producerConsumer/jmx-exporter.yml:/app/jmx-exporter.yml:ro
+    command:
+      [
+        "java",
+        "-javaagent:/opt/jmx/${JMX}=7074:/app/jmx-exporter.yml",
+        "-jar",
+        "/app/app.jar",
+      ]
