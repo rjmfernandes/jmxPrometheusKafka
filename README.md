@@ -123,8 +123,8 @@ We define the tragets for scraping in the file [prometheus.yml](./prometheus/pro
 We define first the data source pointing to our prometheus in [datasource.yml](./grafana/datasource/datasource.yml).
 
 Next we deine the dashboards (mounted in the service in the `compose.yml`):
-- [main-dashboard.json](.grafana/dashboards/main-dashboard.json)
-- [client-dashboard.json](.grafana/dashboards/client-dashboard.json)
+- [main-dashboard.json](./grafana/dashboards/main-dashboard.json)
+- [client-dashboard.json](./grafana/dashboards/client-dashboard.json)
 
 In general you will want to explore the metrics in Prometheus check for example in http://localhost:9090 to query `kafka_consumer_` and see the metrics available for you to build the charts in Grafana and save the dashboard after for reuse.
 
