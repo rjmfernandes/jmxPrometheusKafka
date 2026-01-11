@@ -131,7 +131,7 @@ In general you will want to explore the metrics in Prometheus check for example 
 
 ## Kafka Lag Exporter
 
-In versions previous to CP 8 you can access the consumer group log through the broker leveraging tools like [Kafka Lag Exporter](https://github.com/seglo/kafka-lag-exporter). 
+In versions previous to CP 8 you can access the consumer group lag through the broker leveraging tools like [Kafka Lag Exporter](https://github.com/seglo/kafka-lag-exporter). 
 
 Here we are running it as one service more in our [compose.yml](./compose.yml) and we configure it with [application.conf](kafka-lag-exporter/application.conf):
 
