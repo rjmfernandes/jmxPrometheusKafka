@@ -9,3 +9,9 @@ scrape_configs:
    static_configs:
     - targets:
        - producer-consumer:7074
+ - job_name: kafka-lag-exporter
+   metrics_path: /metrics
+   scrape_interval: 15s
+   static_configs:
+    - targets:
+       - "kafka-lag-exporter:8000"
