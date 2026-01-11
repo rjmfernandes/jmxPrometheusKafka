@@ -15,6 +15,7 @@ Just a basic example for easy prototyping of CP installation with monitoring thr
     - [Producer/Consumer Client](#producerconsumer-client)
     - [Prometheus](#prometheus)
     - [Grafana](#grafana)
+  - [Kafka Lag Exporter](#kafka-lag-exporter)
   - [Cleanup](#cleanup)
 
 ## Disclaimer
@@ -127,6 +128,40 @@ Next we deine the dashboards (mounted in the service in the `compose.yml`):
 - [client-dashboard.json](./grafana/dashboards/client-dashboard.json)
 
 In general you will want to explore the metrics in Prometheus check for example in http://localhost:9090 to query `kafka_consumer_` and see the metrics available for you to build the charts in Grafana and save the dashboard after for reuse.
+
+## Kafka Lag Exporter
+
+In versions previous to CP 8 you can access the consumer group log through the broker leveraging tools like [Kafka Lag Exporter](https://github.com/seglo/kafka-lag-exporter). 
+
+Here we are running it as one service more in our [compose.yml](./compose.yml) and we configure it with [application.conf](kafka-lag-exporter/application.conf):
+
+```
+kafka-lag-exporter {
+  reporters.prometheus.port = 8000
+  clusters = [
+    {
+      name = "local"
+      bootstrap-brokers = "broker:19092"
+    }
+  ]
+}
+```
+
+So that as part of our [prometheus.yml](prometheus/prometheus.yml) configuration we also can configure the scrape for the kafka-lag-exporter:
+
+```
+  - job_name: kafka-lag-exporter
+    metrics_path: /metrics
+    scrape_interval: 15s
+    static_configs:
+      - targets:
+          - "kafka-lag-exporter:8000"
+        labels:
+          namespace: "docker"
+          cluster_name: "local"
+```
+
+In Grafana we have another dashboard set [Kafka Lag Exporter](grafana/dashboards/Kafka_Lag_Exporter_Dashboard.json).
 
 ## Cleanup
 
