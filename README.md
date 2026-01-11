@@ -163,6 +163,8 @@ So that as part of our [prometheus.yml](prometheus/prometheus.yml) configuration
 
 In Grafana we have another dashboard set [Kafka Lag Exporter](grafana/dashboards/Kafka_Lag_Exporter_Dashboard.json).
 
+Check this [article](https://seanglover.com/assets/Monitor%20Kafka%20Consumer%20Group%20Latency%20with%20Kafka%20Lag%20Exporter%20_%20Lightbend.pdf) from Sean Glover for more information on Kafka Lag Exporter. But remember that on more recent versions of CP (8+) you shouldn't need it. 
+
 ## Cleanup
 
 ```shell

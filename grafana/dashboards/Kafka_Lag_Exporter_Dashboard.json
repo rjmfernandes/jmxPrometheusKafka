@@ -705,10 +705,10 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(jvm_memory_bytes_used{app_kubernetes_io_instance=\"kafka-lag-exporter\"}[5m])) by (kubernetes_pod_name)",
+          "expr": "sum(rate(jvm_memory_bytes_used[5m])) by (job)",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{kubernetes_pod_name}}",
+          "legendFormat": "{{job}}",
           "refId": "A"
         }
       ],
@@ -789,10 +789,10 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(jvm_gc_collection_seconds_sum{app_kubernetes_io_instance=\"kafka-lag-exporter\"}[5m])) by (kubernetes_pod_name)",
+          "expr": "sum(rate(jvm_gc_collection_seconds_sum[5m])) by (job)",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{kubernetes_pod_name}}",
+          "legendFormat": "{{job}}",
           "refId": "A"
         }
       ],
@@ -873,10 +873,10 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(jvm_gc_collection_seconds_count{app_kubernetes_io_instance=\"kafka-lag-exporter\"}[5m])) by (kubernetes_pod_name)",
+          "expr": "sum(rate(jvm_gc_collection_seconds_count[5m])) by (job)",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{kubernetes_pod_name}}",
+          "legendFormat": "{{job}}",
           "refId": "A"
         }
       ],
